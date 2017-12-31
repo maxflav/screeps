@@ -19,6 +19,7 @@
 
 var globals = require('globals');
 var utils = require('utils');
+var sources = require('sources');
 
 module.exports = function run(creep) {
   if (Memory.debugAll || Memory.debug == creep.id) {
@@ -120,8 +121,11 @@ function getNewTarget(creep) {
   if (creep.carry.energy <= creep.carryCapacity / 2) {
     utils.debug(creep, creep.name + " low on energy, will target a source");
     target = getNewTargetSource(creep);
-    utils.debug(creep, creep.name + " found this source: " + target.id);
-    if (target != null) { return target; }
+    if (target != null) {
+      utils.debug(creep, creep.name + " found this source: " + target.id);
+      return target;
+    }
+    utils.debug(creep, creep.name + " found no valid source");
 
     if (creep.carry.energy == 0) {
       return null;
@@ -148,7 +152,8 @@ function getNewTarget(creep) {
 function getNewTargetSource(creep) {
   return creep.pos.findClosestByRange(FIND_SOURCES, {
     filter: function(source) {
-      return source.energy > 0 && globals.getTargetCount(source) < 3;
+      return source.energy > 0 &&
+        globals.getTargetCount(source) < sources.getSourceSlots(source);
     }
   });
 }

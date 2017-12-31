@@ -9,8 +9,6 @@ var EXTENSION_LIMIT_PER_LEVEL = {
 };
 
 module.exports = function(room) {
-  // return;
-
   var controller = room.controller;
   var level = controller.level;
   var extensionLimit = EXTENSION_LIMIT_PER_LEVEL[level] || 0;
