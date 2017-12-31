@@ -26,7 +26,7 @@ module.exports.getSourceSlots = function(source) {
       if (dx == 0 && dy == 0) continue;
       var newY = y + dy;
       var type = map.getType(room, newX, newY);
-      if (type != map.BLOCKABLE) {
+      if (type != map.BLOCKED) {
         slotsCount++;
       }
     }
