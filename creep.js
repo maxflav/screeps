@@ -42,7 +42,7 @@ module.exports = function run(creep) {
     target = getNewTarget(creep);
     if (!target) {
       // shrug
-      utils.wander(creep);
+      utils.wander(creep, true);
       return null;
     }
     globals.incrementTargetCount(target);
@@ -67,7 +67,7 @@ module.exports = function run(creep) {
     globals.decrementTargetCount(target);
     target = null;
     creep.memory.targetId = null;
-    utils.wander(creep);
+    utils.wander(creep, true);
   }
 };
 
@@ -224,7 +224,7 @@ function interactWithTarget(creep, target) {
   if (target instanceof ConstructionSite) {
     var buildResult = creep.build(target);
     if (buildResult == OK) {
-      if (Math.random() < 0.5) utils.wander(creep);
+      if (Math.random() < 0.5) utils.wander(creep, true);
     }
     return buildResult;
   }
@@ -237,7 +237,7 @@ function interactWithTarget(creep, target) {
   if (target instanceof StructureController) {
     var upgradeResult = creep.upgradeController(target);
     if (upgradeResult == OK) {
-      if (Math.random() < 0.5) utils.wander(creep);
+      if (Math.random() < 0.5) utils.wander(creep, false);
     }
     return upgradeResult;
   }

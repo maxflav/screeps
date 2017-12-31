@@ -4,7 +4,6 @@ var build = require('build');
 
 
 module.exports.loop = function () {
-  console.log("hi2 " + Game.time);
   if (Math.random() < 0.1) {
     clearDeadCreeps();
   }
@@ -43,7 +42,7 @@ module.exports.loop = function () {
     availableEnergy += extension.energy;
   });
 
-  if (availableEnergy < 200 || Object.values(Game.creeps).length >= 6) {
+  if (availableEnergy < 300 || Object.values(Game.creeps).length >= 6) {
     return;
   }
   
@@ -72,8 +71,7 @@ module.exports.loop = function () {
   result = Game.spawns['Spawn1'].spawnCreep(parts, name);
 
   if (result != OK) {
-      console.log('Failed to create ' + name + ': ' + result);
-      // result = Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], name);
+    console.log('Failed to create ' + name + ': ' + result);
   }
 }
 

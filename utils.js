@@ -13,12 +13,15 @@ utils.getDistance = function(a, b) {
 	return Math.max(Math.abs(a.pos.x - b.pos.x), Math.abs(a.pos.y - b.pos.y));
 };
 
-utils.wander = function(creep) {
+utils.wander = function(creep, idly) {
   var movements = [TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT];
   var rnd = Math.floor(Math.random() * movements.length);
   creep.move(movements[rnd]);
-  creep.memory.lastWanderTime = Game.time;
-  creep.say(creep.name + '?');
+
+  if (idly) {
+    creep.say(creep.name + '?');
+    creep.memory.lastWanderTime = Game.time;
+  }
 }
 
 utils.debug = function(object, str) {
