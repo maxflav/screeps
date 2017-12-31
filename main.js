@@ -4,6 +4,7 @@ var build = require('build');
 
 
 module.exports.loop = function () {
+  console.log("hi! " + Game.time);
   if (Math.random() < 0.1) {
     clearDeadCreeps();
   }
