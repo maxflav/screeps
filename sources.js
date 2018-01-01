@@ -8,7 +8,7 @@ module.exports.getSourceSlots = function(source) {
   }
 
   var room = source.room;
-  if (!('sourceSlots' in room.memory)) {
+  if (!('sourceSlots' in room.memory) || Math.random() < 0.001) {
     room.memory.sourceSlots = {};
   }
   var cached = room.memory.sourceSlots[source.id];

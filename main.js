@@ -42,7 +42,7 @@ module.exports.loop = function () {
     availableEnergy += extension.energy;
   });
 
-  if (availableEnergy < 300 || Object.values(Game.creeps).length >= 6) {
+  if (availableEnergy < 300 || Object.values(Game.creeps).length >= 8) {
     return;
   }
   
