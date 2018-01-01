@@ -13,8 +13,8 @@ module.exports = function(tower) {
   }
 
   if (shoot(tower) == OK) return;
-  if (repair(tower) == OK) return;
   if (heal(tower) == OK) return;
+  if (repair(tower) == OK) return;
 }
 
 function shoot(tower) {
@@ -27,9 +27,34 @@ function shoot(tower) {
 }
 
 function repair(tower) {
+  // Only repair if the tower's energy is 75%+
+  if (tower.energy < tower.energyCapacity * 0.75) {
+    return ERR_NOT_ENOUGH_ENERGY;
+  }
+
   var repairTargets = tower.room.find(FIND_STRUCTURES, {
     filter: function(object) {
-      return object.hits && object.hits < object.hitsMax;
+      if (object instanceof OwnedStructure && !object.my) {
+        return false;
+      }
+      if (!object.hits) {
+        // Things without hit points can't be repaired
+        return false;
+      }
+      if (object.hits == object.hitsMax) {
+        return false;
+      }
+      if (object.structureType == STRUCTURE_ROAD) {
+        // If it's a road, only repair if it's below 50%
+        return object.hits < object.hitsMax / 2;
+      }
+      if (object.structureType == STRUCTURE_WALL) {
+        // Never repair walls?
+        return false;
+      }
+
+      // Otherwise repair things which are down by at least 1000 hp
+      return object.hits <= object.hitsMax - 1000;
     }
   });
 
@@ -37,14 +62,14 @@ function repair(tower) {
     return ERR_INVALID_TARGET;
   }
 
-  // Find the one with the lowest hits.
+  // Find the one with the lowest hits by %.
   var target = utils.maximize(repairTargets, function(target) {
-    return -target.hits;
+    return -(target.hits / target.hitsMax);
   });
 
   return tower.repair(target);
 }
 
 function heal(tower) {
-  
+  return ERR_INVALID_TARGET;
 }
