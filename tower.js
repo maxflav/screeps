@@ -6,10 +6,9 @@ module.exports = function(tower) {
     return;
   }
 
-  var result = shoot(tower);
-  if (result != OK) {
-    repair(tower);
-  }
+  if (shoot(tower) == OK) return;
+  if (repair(tower) == OK) return;
+  if (heal(tower) == OK) return;
 }
 
 function shoot(tower) {
@@ -17,9 +16,14 @@ function shoot(tower) {
   if (!target) {
     return ERR_INVALID_TARGET;
   }
-  debug(tower, "Tower found a target " + target.id);
+  debug(tower, "Tower found a target to shoot " + target.id);
+  return tower.attack(target);
 }
 
 function repair(tower) {
 
+}
+
+function heal(tower) {
+  
 }
