@@ -51,19 +51,11 @@ module.exports = function run(creep) {
     creep.memory.targetId = target.id;
   }
 
-  // var posBefore = creep.pos;
   var moveResult = creep.moveTo(target, {
     reusePath: 10,
     visualizePathStyle: { stroke: '#ffffff' }
   });
-
   var interactResult = interactWithTarget(creep, target);
-  // console.log(creep.name + " before moving, pos = " + creep.pos.x + ", " + creep.pos.y);
-  // console.log(creep.name + " after moving, pos = " + creep.pos.x + ", " + creep.pos.y);
-  // if (moveResult == OK && posBefore == creep.pos) {
-  //   console.log(creep.name + " didn't move");
-  //   moveResult = ERR_NO_PATH;
-  // }
 
   if (interactResult != OK && moveResult != OK && moveResult != ERR_TIRED) {
     globals.decrementTargetCount(target);
@@ -237,7 +229,7 @@ function interactWithTarget(creep, target) {
   if (target instanceof ConstructionSite) {
     var buildResult = creep.build(target);
     if (buildResult == OK) {
-      if (Math.random() < 0.5) utils.wander(creep, true);
+      dontCrowd(creep, target);
     }
     return buildResult;
   }
@@ -249,12 +241,23 @@ function interactWithTarget(creep, target) {
   if (target instanceof StructureController) {
     var upgradeResult = creep.upgradeController(target);
     if (upgradeResult == OK) {
-      if (Math.random() < 0.5) utils.wander(creep, false);
+      dontCrowd(creep, target);
     }
     return upgradeResult;
   }
 
   return ERR_INVALID_TARGET;
+}
+
+function dontCrowd(creep, target) {
+  if (Math.random() > 0.3) {
+    return;
+  }
+
+  var distance = utils.distance(creep, target);
+  if (distance < 4) {
+    utils.wander(creep, false);
+  }
 }
 
 function considerMakingARoadHere(creep) {

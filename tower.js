@@ -2,7 +2,7 @@ var debug = require('debug');
 
 module.exports = function(tower) {
   if (tower.energy <= 0) {
-    debug(tower, "Sad empty tower " + tower.id);
+    console.log(tower, "Sad empty tower " + tower.id);
     return;
   }
 
@@ -16,7 +16,7 @@ function shoot(tower) {
   if (!target) {
     return ERR_INVALID_TARGET;
   }
-  debug(tower, "Tower found a target to shoot " + target.id);
+  console.log(tower, "Tower found a target to shoot " + target.id);
   return tower.attack(target);
 }
 

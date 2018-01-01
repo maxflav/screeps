@@ -9,7 +9,7 @@
 
 var utils = {};
 
-utils.getDistance = function(a, b) {
+utils.distance = function(a, b) {
 	return Math.max(Math.abs(a.pos.x - b.pos.x), Math.abs(a.pos.y - b.pos.y));
 };
 
