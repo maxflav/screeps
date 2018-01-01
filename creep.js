@@ -197,22 +197,34 @@ function getNewTargetEnergyDump(creep) {
   return closest;
 }
 
-function getNewTargetConstructionSite(creep) {
-  var structureTypes = [
-    STRUCTURE_SPAWN,
-    STRUCTURE_EXTENSION,
-    STRUCTURE_TOWER,
-    STRUCTURE_CONTAINER,
-    STRUCTURE_RAMPART,
-    STRUCTURE_WALL,
-    STRUCTURE_ROAD,
-  ];
+var STRUCTURE_TYPES = [
+  STRUCTURE_SPAWN,
+  STRUCTURE_EXTENSION,
+  STRUCTURE_TOWER,
+  STRUCTURE_CONTAINER,
+  STRUCTURE_RAMPART,
+  STRUCTURE_WALL,
+  STRUCTURE_ROAD,
+];
 
-  for (var i = 0; i < structureTypes.length; i++) {
-    var type = structureTypes[i];
+var MAX_WORKERS_PER_CONSTRUCTION = {
+  STRUCTURE_SPAWN: 5,
+  STRUCTURE_EXTENSION: 5,
+  STRUCTURE_TOWER: 3,
+  STRUCTURE_CONTAINER: 3,
+  STRUCTURE_RAMPART: 1,
+  STRUCTURE_WALL: 1,
+  STRUCTURE_ROAD: 1,
+}
+
+function getNewTargetConstructionSite(creep) {
+
+  for (var i = 0; i < STRUCTURE_TYPES.length; i++) {
+    var type = STRUCTURE_TYPES[i];
     var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, {
       filter: function(object) {
-        return object.structureType == type && globals.getTargetCount(object) <= 3;
+        return object.structureType == type &&
+               globals.getTargetCount(object) < MAX_WORKERS_PER_CONSTRUCTION[type];
       }
     });
 
