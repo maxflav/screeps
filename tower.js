@@ -27,9 +27,9 @@ function shoot(tower) {
 }
 
 function repair(tower) {
-  var repairTargets = tower.room.find(FIND_MY_STRUCTURES, {
+  var repairTargets = tower.room.find(FIND_STRUCTURES, {
     filter: function(object) {
-      return object.hits < object.hitsMax;
+      return object.hits && object.hits < object.hitsMax;
     }
   });
 
