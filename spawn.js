@@ -9,19 +9,10 @@ module.exports = function(spawn) {
     return;
   }
 
-  var availableEnergy = spawn.energy;
-  var extensions = spawn.room.find(FIND_MY_STRUCTURES, {
-    filter: function(object) {
-      return object.structureType == STRUCTURE_EXTENSION
-        && object.energy > 0
-        && object.isActive();
-    }
-  });
-
-  extensions.forEach(function(extension) {
-    availableEnergy += extension.energy;
-  });
-
+  if (Math.random() < 0.9) {
+    return;
+  }
+  var availableEnergy = spawn.room.energyAvailable;
   if (availableEnergy < 300 || Object.values(Game.creeps).length >= 8) {
     return;
   }

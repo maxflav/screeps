@@ -210,14 +210,6 @@ function getNewTargetEnergyDump(creep) {
     filter: function(object) {
       var type = object.structureType;
 
-      debug(creep, "considering dump " + object + " " + JSON.stringify([
-        DUMP_TARGETS.includes(type),
-        object.energy < object.energyCapacity,
-        globals.getTargetCount(object),
-        MAX_DUMPERS_PER_TYPE[type],
-        object.isActive()
-      ]));
-
       var result =
         DUMP_TARGETS.includes(type) &&
         object.energy < object.energyCapacity &&
