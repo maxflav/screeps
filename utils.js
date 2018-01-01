@@ -36,4 +36,18 @@ utils.pick = function(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+utils.maximize = function(list, func) {
+  var bestItem = null;
+  var bestScore = null;
+  list.forEach(function(item) {
+    var score = func(item);
+    if (!bestItem || score > bestScore) {
+      bestItem = item;
+      bestScore = score;
+    }
+  });
+
+  return bestItem;
+}
+
 module.exports = utils;

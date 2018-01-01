@@ -250,8 +250,8 @@ function getNewTargetToRepair(creep) {
     return repairTarget;
   }
 
-  // Otherwise creeps should rarely repair, let towers do it
-  if (Math.random() < 0.9) {
+  // Otherwise creeps should rarely repair, let towers do it. Assuming towers can exist.
+  if (creep.room.controller.level >= 3 && Math.random() < 0.9) {
     return;
   }
 

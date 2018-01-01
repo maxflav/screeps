@@ -1,8 +1,14 @@
 var debug = require('debug');
+var utils = require('utils');
 
 module.exports = function(tower) {
+  if (!('towerTargets' in Memory)) {
+    Memory.towerTargets = {};
+  }
+
   if (tower.energy <= 0) {
-    console.log(tower, "Sad empty tower " + tower.id);
+    debug(tower, "Sad empty tower");
+    Memory.towerTargets[tower.id] = null;
     return;
   }
 
@@ -21,7 +27,22 @@ function shoot(tower) {
 }
 
 function repair(tower) {
+  var repairTargets = tower.room.find(FIND_MY_STRUCTURES, {
+    filter: function(object) {
+      return object.hits < object.hitsMax;
+    }
+  });
 
+  if (!repairTargets || !repairTargets.length) {
+    return ERR_INVALID_TARGET;
+  }
+
+  // Find the one with the lowest hits.
+  var target = utils.maximize(repairTargets, function(target) {
+    return -target.hits;
+  });
+
+  return tower.repair(target);
 }
 
 function heal(tower) {
