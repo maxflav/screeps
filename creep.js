@@ -237,11 +237,27 @@ function getNewTargetConstructionSite(creep) {
 }
 
 function getNewTargetToRepair(creep) {
-  // Only target things that are < 50%
+  // Repairing towers is important
   var repairTarget = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
     filter: function(object) {
-      return object.structureType != STRUCTURE_WALL &&
-             object.hits * 2 < object.hitsMax &&
+      return object.structureType == STRUCTURE_TOWER &&
+             object.hits < object.hitsMax &&
+             globals.getTargetCount(object) < 3;
+    }
+  });
+
+  if (repairTarget) {
+    return repairTarget;
+  }
+
+  // Otherwise creeps should rarely repair, let towers do it
+  if (Math.random() < 0.9) {
+    return;
+  }
+
+  repairTarget = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+    filter: function(object) {
+      return object.hits < object.hitsMax &&
              globals.getTargetCount(object) < 1;
     }
   });
