@@ -51,7 +51,7 @@ module.exports = function run(creep) {
     target = Game.getObjectById(creep.memory.targetId);
   }
 
-  if (target && Math.random() < 0.1) {
+  if (target) {
     if (!isTargetValid(creep, target)) {
       globals.decrementTargetCount(target);
       creep.memory.targetId = null;
@@ -178,7 +178,8 @@ function getNewTarget(creep) {
 function getNewTargetSource(creep) {
   var foundResource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
     filter: function(resource) {
-      return resource.amount > 0 &&
+      var distance = utils.distance(creep, resource);
+      return resource.amount > distance + 50 &&
         globals.getTargetCount(resource) < 1;
     }
   });
@@ -209,6 +210,14 @@ function getNewTargetEnergyDump(creep) {
   var closest = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
     filter: function(object) {
       var type = object.structureType;
+
+      debug(creep, "considering dump " + object + " " + JSON.stringify([
+        DUMP_TARGETS.includes(type),
+        object.energy < object.energyCapacity,
+        globals.getTargetCount(object),
+        MAX_DUMPERS_PER_TYPE[type],
+        object.isActive()
+      ]));
 
       var result =
         DUMP_TARGETS.includes(type) &&
