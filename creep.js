@@ -22,8 +22,27 @@ var globals = require('globals');
 var sources = require('sources');
 var utils = require('utils');
 
+// If we get these results, invalidate my target
+var BAD_RESULTS = [
+  ERR_NOT_OWNER,
+  ERR_NO_PATH,
+  ERR_NAME_EXISTS,
+  ERR_BUSY,
+  ERR_NOT_FOUND,
+  ERR_NOT_ENOUGH_ENERGY,
+  ERR_NOT_ENOUGH_RESOURCES,
+  ERR_INVALID_TARGET,
+  ERR_FULL,
+  ERR_INVALID_ARGS,
+  ERR_NO_BODYPART,
+  ERR_NOT_ENOUGH_EXTENSIONS,
+  ERR_RCL_NOT_ENOUGH,
+  ERR_GCL_NOT_ENOUGH,
+];
+
+
 module.exports = function run(creep) {
-  if (Memory.debugAll || Memory.debug == creep.id) {
+  if (Memory.debugAll || Memory.debug) {
     creep.say(creep.name);
   }
 
@@ -57,7 +76,13 @@ module.exports = function run(creep) {
   });
   var interactResult = interactWithTarget(creep, target);
 
-  if (interactResult != OK && moveResult != OK && moveResult != ERR_TIRED) {
+  if (BAD_RESULTS.includes(moveResult) || BAD_RESULTS.includes(interactResult)) {
+    debug(creep,
+      "target=" + target +
+      ", moveResult=" + moveResult +
+      ", interactResult=" + interactResult +
+      "; invalidating target.");
+
     globals.decrementTargetCount(target);
     target = null;
     creep.memory.targetId = null;
@@ -69,7 +94,7 @@ module.exports = function run(creep) {
 
 function isTargetValid(creep, target) {
   if (target instanceof Structure && !target.isActive()) {
-    debug(creep, creep.name + " structure is invalid because it's not active");
+    debug(creep, "structure is invalid because it's not active");
     return false;
   }
 
@@ -77,7 +102,7 @@ function isTargetValid(creep, target) {
 
   if (target instanceof Structure) {
     if (target.hits < target.hitsMax && fullness > 0) {
-      debug(creep, creep.name + " structure is valid because we can repair it");
+      debug(creep, "structure is valid because we can repair it");
       // We can repair this!
       return true;
     }
@@ -85,7 +110,7 @@ function isTargetValid(creep, target) {
 
   if (target instanceof Source) {
     var valid = fullness < 1 && target.energy > 0;
-    debug(creep, creep.name + " source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
+    debug(creep, "source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
     return valid;
   }
 
@@ -111,16 +136,16 @@ function getNewTarget(creep) {
   // -- 2b. repair something
   // -- 3. controller.
 
-  debug(creep, creep.name + " getting new target");
+  debug(creep, "getting new target");
   var target = null;
   if (creep.carry.energy <= creep.carryCapacity / 2) {
-    debug(creep, creep.name + " low on energy, will target a source");
+    debug(creep, "low on energy, will target a source");
     target = getNewTargetSource(creep);
     if (target != null) {
-      debug(creep, creep.name + " found this source: " + target.id);
+      debug(creep, "found this source: " + target.id);
       return target;
     }
-    debug(creep, creep.name + " found no valid source");
+    debug(creep, "found no valid source");
 
     if (creep.carry.energy == 0) {
       return null;
