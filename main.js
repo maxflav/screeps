@@ -1,77 +1,45 @@
-var globals = require('globals');
-var creepsLib = require('creep');
 var build = require('build');
+var creepsLib = require('creep');
+var globals = require('globals');
+var spawnLib = require('spawn');
+var utils = require('utils');
 
 
 module.exports.loop = function () {
-  if (Math.random() < 0.1) {
-    clearDeadCreeps();
-  }
+  var errors = [];
 
-  var spawn = Game.spawns['Spawn1'];
-  globals.resetTargetCounts();
-  build(spawn.room);
+  try {
+    globals.resetTargetCounts();
+
+    if (Math.random() < 0.01) {
+      clearDeadCreeps();
+    }
+
+    var spawn = Game.spawns['Spawn1'];
+    build(spawn.room);
+  } catch (e) {
+    errors.push(e);
+  }
 
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
-    creepsLib(creep);
-    
-    if (Math.random() < 0.001) {
-      var lastWander = creep.memory.lastWanderTime;
-      if (!lastWander || Game.time - lastWander > 20) {
-        var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
-        console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
-      }
+
+    try {
+      creepsLib(creep);
+    } catch (e) {
+      errors.push(e);
     }
   }
 
-  if (spawn.spawning != null) {
-    return;
+  try {
+    spawnLib(spawn);
+  } catch (e) {
+    errors.push(e);
   }
 
-  var availableEnergy = spawn.energy;
-  var extensions = spawn.room.find(FIND_MY_STRUCTURES, {
-    filter: function(object) {
-      return object.structureType == STRUCTURE_EXTENSION
-        && object.energy > 0
-        && object.isActive();
-    }
-  });
-
-  extensions.forEach(function(extension) {
-    availableEnergy += extension.energy;
-  });
-
-  if (availableEnergy < 300 || Object.values(Game.creeps).length >= 8) {
-    return;
-  }
-  
-  var name = '';
-  var num = Game.time % (26 * 26 * 26);
-  for (var c = 0; c < 3; c++) {
-    name += String.fromCharCode(65 + num % 26);
-    num /= 26;
-  }
-
-  var parts = [MOVE, WORK, CARRY];
-  availableEnergy -= 200;
-
-  var partToAddIndex = 0;
-  while (parts.length < 50 && availableEnergy >= BODYPART_COST[parts[partToAddIndex]]) {
-    var addingPart = parts[partToAddIndex];
-    partToAddIndex++;
-    parts = parts.concat(addingPart);
-    availableEnergy -= BODYPART_COST[addingPart];
-  }
-  if (availableEnergy >= 50) {
-    parts.push(CARRY);
-  }
-
-  console.log('Spawning ' + name + ' with ' + parts);
-  result = Game.spawns['Spawn1'].spawnCreep(parts, name);
-
-  if (result != OK) {
-    console.log('Failed to create ' + name + ': ' + result);
+  if (errors.length > 0) {
+    errors.forEach(function(e) { console.log(e); });
+    throw utils.pick(errors);
   }
 }
 

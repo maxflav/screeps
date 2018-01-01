@@ -17,9 +17,10 @@
 // - Move toward it: `creep.moveTo(target, {reusePath: 5});`
 // - Interact with it.
 
+var debug = require('debug');
 var globals = require('globals');
-var utils = require('utils');
 var sources = require('sources');
+var utils = require('utils');
 
 module.exports = function run(creep) {
   if (Memory.debugAll || Memory.debug == creep.id) {
@@ -31,7 +32,7 @@ module.exports = function run(creep) {
     target = Game.getObjectById(creep.memory.targetId);
   }
 
-  if (target) {
+  if (target && Math.random() < 0.1) {
     if (!isTargetValid(creep, target)) {
       globals.decrementTargetCount(target);
       creep.memory.targetId = null;
@@ -70,6 +71,8 @@ module.exports = function run(creep) {
     creep.memory.targetId = null;
     utils.wander(creep, true);
   }
+
+  considerMakingARoadHere();
 };
 
 function isTargetValid(creep, target) {
@@ -90,7 +93,7 @@ function isTargetValid(creep, target) {
 
   if (target instanceof Source) {
     var valid = fullness < 1 && target.energy > 0;
-    // utils.debug(creep, creep.name + " source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
+    // debug(creep, creep.name + " source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
     return valid;
   }
 
@@ -116,16 +119,16 @@ function getNewTarget(creep) {
   // -- 2b. repair something
   // -- 3. controller.
 
-  utils.debug(creep, creep.name + " getting new target");
+  debug(creep, creep.name + " getting new target");
   var target = null;
   if (creep.carry.energy <= creep.carryCapacity / 2) {
-    utils.debug(creep, creep.name + " low on energy, will target a source");
+    debug(creep, creep.name + " low on energy, will target a source");
     target = getNewTargetSource(creep);
     if (target != null) {
-      utils.debug(creep, creep.name + " found this source: " + target.id);
+      debug(creep, creep.name + " found this source: " + target.id);
       return target;
     }
-    utils.debug(creep, creep.name + " found no valid source");
+    debug(creep, creep.name + " found no valid source");
 
     if (creep.carry.energy == 0) {
       return null;
@@ -248,4 +251,14 @@ function interactWithTarget(creep, target) {
   }
 
   return ERR_INVALID_TARGET;
+}
+
+function considerMakingARoadHere(creep) {
+  if (Math.random() < 0.001) {
+  var lastWander = creep.memory.lastWanderTime;
+  if (!lastWander || Game.time - lastWander > 20) {
+    var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
+    console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
+  }
+}
 }

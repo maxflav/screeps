@@ -15,8 +15,7 @@ utils.getDistance = function(a, b) {
 
 utils.wander = function(creep, idly) {
   var movements = [TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT];
-  var rnd = Math.floor(Math.random() * movements.length);
-  creep.move(movements[rnd]);
+  creep.move(utils.pick(movements));
 
   if (idly) {
     creep.say(creep.name + '?');
@@ -28,6 +27,13 @@ utils.debug = function(object, str) {
   if (Memory.debugAll || Memory.debug == object.id) {
     console.log(str);
   }
+}
+
+utils.pick = function(list) {
+  if (!list || !list.length) {
+    return null;
+  }
+  return list[Math.floor(Math.random() * list.length)];
 }
 
 module.exports = utils;
