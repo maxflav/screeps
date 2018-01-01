@@ -7,8 +7,8 @@ module.exports = function(room) {
   var extensionLimit = EXTENSION_LIMIT_PER_LEVEL[level] || 0;
   var towerLimit = TOWER_LIMIT_PER_LEVEL[level] || 0;
 
-  makeSureWeHave(room, extensionLimit, STRUCTURE_EXTENSION);
   makeSureWeHave(room, towerLimit, STRUCTURE_TOWER);
+  makeSureWeHave(room, extensionLimit, STRUCTURE_EXTENSION);
 }
 
 var EXTENSION_LIMIT_PER_LEVEL = {

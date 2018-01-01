@@ -93,7 +93,7 @@ function isTargetValid(creep, target) {
 
   if (target instanceof Source) {
     var valid = fullness < 1 && target.energy > 0;
-    // debug(creep, creep.name + " source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
+    debug(creep, creep.name + " source valid = " + valid + " because fullness = " + fullness + " & source.energy = " + target.energy);
     return valid;
   }
 
@@ -161,12 +161,17 @@ function getNewTargetSource(creep) {
   });
 }
 
+var DUMP_TARGETS = [
+  STRUCTURE_EXTENSION,
+  STRUCTURE_SPAWN,
+  STRUCTURE_TOWER
+];
+
 function getNewTargetEnergyDump(creep) {
   var closest = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
     filter: function(object) {
       var result =
-        (object.structureType == STRUCTURE_EXTENSION ||
-         object.structureType == STRUCTURE_SPAWN) &&
+        DUMP_TARGETS.includes(object.structureType) &&
         object.energy < object.energyCapacity &&
         object.isActive();
        return result;
@@ -188,7 +193,7 @@ function getNewTargetConstructionSite(creep) {
 
   for (var i = 0; i < structureTypes.length; i++) {
     var type = structureTypes[i];
-    var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES, {
+    var target = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES, {
       filter: function(object) {
         return object.structureType == type && globals.getTargetCount(object) <= 3;
       }
@@ -204,7 +209,7 @@ function getNewTargetConstructionSite(creep) {
 
 function getNewTargetToRepair(creep) {
   // Only target things that are < 50%
-  var repairTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+  var repairTarget = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
     filter: function(object) {
       return object.structureType != STRUCTURE_WALL &&
              object.hits * 2 < object.hitsMax &&
@@ -237,8 +242,7 @@ function interactWithTarget(creep, target) {
     return buildResult;
   }
 
-  if (target instanceof StructureSpawn ||
-      target instanceof StructureExtension) {
+  if (DUMP_TARGETS.includes(target.structureType)) {
     return creep.transfer(target, RESOURCE_ENERGY);
   }
 
