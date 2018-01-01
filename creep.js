@@ -184,12 +184,21 @@ var DUMP_TARGETS = [
   STRUCTURE_TOWER
 ];
 
+var MAX_DUMPERS_PER_TYPE = {
+  STRUCTURE_SPAWN: 3,
+  STRUCTURE_EXTENSION: 1,
+  STRUCTURE_TOWER: 1,
+}
+
 function getNewTargetEnergyDump(creep) {
   var closest = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
     filter: function(object) {
+      var type = object.structureType;
+
       var result =
-        DUMP_TARGETS.includes(object.structureType) &&
+        DUMP_TARGETS.includes(type) &&
         object.energy < object.energyCapacity &&
+        globals.getTargetCount(object) < MAX_DUMPERS_PER_TYPE[type] &&
         object.isActive();
        return result;
     }
