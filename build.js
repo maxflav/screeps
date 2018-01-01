@@ -1,4 +1,18 @@
+var map = require('map');
+var utils = require('utils');
+
+module.exports = function(room) {
+  var controller = room.controller;
+  var level = controller.level;
+  var extensionLimit = EXTENSION_LIMIT_PER_LEVEL[level] || 0;
+  var towerLimit = TOWER_LIMIT_PER_LEVEL[level] || 0;
+
+  makeSureWeHave(room, extensionLimit, STRUCTURE_EXTENSION);
+  makeSureWeHave(room, towerLimit, STRUCTURE_TOWER);
+}
+
 var EXTENSION_LIMIT_PER_LEVEL = {
+  1: 0,
   2: 5,
   3: 10,
   4: 20,
@@ -8,63 +22,68 @@ var EXTENSION_LIMIT_PER_LEVEL = {
   8: 60,
 };
 
-module.exports = function(room) {
-  var controller = room.controller;
-  var level = controller.level;
-  var extensionLimit = EXTENSION_LIMIT_PER_LEVEL[level] || 0;
+var TOWER_LIMIT_PER_LEVEL = {
+  1: 0,
+  2: 0,
+  3: 1,
+  4: 1,
+  5: 2,
+  6: 2,
+  7: 3,
+  8: 6,
+}
 
-  var numBuiltExtensions = room.find(FIND_MY_STRUCTURES, {
+function makeSureWeHave(room, limit, type) {
+  var numBuilt = room.find(FIND_MY_STRUCTURES, {
     filter: function(object) {
-      return object.structureType == STRUCTURE_EXTENSION;
+      return object.structureType == type;
     }
   }).length;
 
-  var numConstructingExtensions = room.find(FIND_MY_CONSTRUCTION_SITES, {
+  var numConstructing = room.find(FIND_MY_CONSTRUCTION_SITES, {
     filter: function(object) {
-      return object.structureType == STRUCTURE_EXTENSION;
+      return object.structureType == type;
     }
   }).length;  
 
-  var numExtensions = numBuiltExtensions + numConstructingExtensions;
-  if (numExtensions >= extensionLimit) {
+  var total = numBuilt + numConstructing;
+  if (total >= limit) {
     return;
   }
 
-  console.log("We only have " + numExtensions + " extensions but we can have " + extensionLimit + " at level " + level);
+  console.log("We only have " + total + " " + type + "s but we can have " + limit + " in " + room.name);
 
-  var numToMake = extensionLimit - numExtensions;
+  var numToMake = limit - total;
   for (var i = 0; i < numToMake; i++) {
-    var pos = findANiceSpot(room);
-    console.log("Creating an extension at " + pos.x + ", " + pos.y);
-    room.createConstructionSite(pos.x, pos.y, STRUCTURE_EXTENSION);
+    var pos = findANiceSpot(room, type);
+
+    if (pos) {
+      console.log("Creating a " + type + " at " + pos.x + ", " + pos.y);
+      room.createConstructionSite(pos.x, pos.y, type);
+    } else {
+      console.log("Couldn't find anywhere to place a " + type + " in " + room.name + "!");
+    }
   }
 };
 
 
-var EMPTY = 'empty';
-var WALKABLE = 'walkable'; // walkable means there is no building/wall/creep, but roads are ok
-var BLOCKED = 'blocked';
-
-var mapCache = {};
 var source;
 
 var positionStack;
 
-function findANiceSpot(room) {
+function findANiceSpot(room, type) {
   // Start at a source, then walk randomly (not thru walls/structures) until:
   // - we are not inside anything else
   // - we get to a space which has at most one neighboring structure or creep
   // - not next to the source
 
   if (!positionStack || !positionStack.length) {
-    if (!source) {
+    if (!source && type == STRUCTURE_EXTENSION) {
       var sources = room.find(FIND_SOURCES);
-
-      if (!sources || !sources.length) {
-        source = room.controller;
-      } else {
-        source = sources[0];
-      }
+      source = utils.pickOne(sources);
+    }
+    if (!source) {
+      source = room.controller;
     }
 
     positionStack = [{x: source.pos.x, y: source.pos.y}];
@@ -91,8 +110,8 @@ function findANiceSpot(room) {
         if (dx == 0 && dy == 0) continue;
 
         var y = pos.y + dy;
-        var type = getType(room, x, y);
-        if (type == BLOCKED) {
+        var type = map.getType(room, x, y);
+        if (type == map.BLOCKED) {
           if (dx == 0 || dy == 0) hasBlockedAdjacent = true;
         } else {
           if (!visited[x][y]) {
@@ -103,80 +122,14 @@ function findANiceSpot(room) {
       }
     }
 
-    if (getType(room, pos.x, pos.y) == EMPTY && !hasBlockedAdjacent) {
+    if (map.getType(room, pos.x, pos.y) == map.EMPTY && !hasBlockedAdjacent) {
       var distanceFromSource = Math.abs(pos.x - source.pos.x) + Math.abs(pos.y - source.pos.y);
       if (distanceFromSource > 3) {
-        mapCache[pos.x][pos.y] = BLOCKED;
+        map.setType(room, pos.x, pos.y, map.BLOCKED);
         return pos;
       }
     }
   }
   
   return null;
-}
-
-function getType(room, x, y) {
-  if (x in mapCache && y in mapCache[x]) {
-    return mapCache[x][y];
-  }
-
-  var result = _getType(room, x, y);
-  if (!(x in mapCache)) mapCache[x] = {};
-  mapCache[x][y] = result;
-  return result;
-}
-
-function _getType(room, x, y) {
-  var lookResults;
-  try {
-    lookResults = room.lookAt(x, y);
-  } catch (e) {
-    return BLOCKED;
-  }
-
-  for (var lookIndex = 0; lookIndex < lookResults.length; lookIndex++) {
-    var lookResult = lookResults[lookIndex];
-    if (_typeOfLookResult(lookResult) == BLOCKED) {
-      return BLOCKED;
-    }
-  }
-
-  for (var lookIndex = 0; lookIndex < lookResults.length; lookIndex++) {
-    var lookResult = lookResults[lookIndex];
-    if (_typeOfLookResult(lookResult) == WALKABLE) {
-      return WALKABLE;
-    }
-  }
-
-  return EMPTY;
-}
-
-function _typeOfLookResult(lookResult) {
-  var subtype;
-
-  if (lookResult.type == LOOK_CREEPS) return WALKABLE;
-  else if (lookResult.type == LOOK_ENERGY) return WALKABLE;
-  else if (lookResult.type == LOOK_RESOURCES) return WALKABLE;
-  else if (lookResult.type == LOOK_SOURCES) return BLOCKED;
-  else if (lookResult.type == LOOK_MINERALS) return BLOCKED;
-  else if (lookResult.type == LOOK_STRUCTURES) {
-    subtype = lookResult.structure.structureType;
-  }
-  else if (lookResult.type == LOOK_FLAGS) return WALKABLE;
-  else if (lookResult.type == LOOK_CONSTRUCTION_SITES) {
-    subtype = lookResult.constructionSite.structureType;
-  }
-  else if (lookResult.type == LOOK_NUKES) return WALKABLE;
-  else if (lookResult.type == LOOK_TERRAIN) {
-    subtype = lookResult.terrain;
-    if (subtype == 'plain') {
-      return EMPTY;
-    }
-  }
-
-  if (OBSTACLE_OBJECT_TYPES.includes(subtype)) {
-    return BLOCKED;
-  } else {
-    return WALKABLE;
-  }
 }

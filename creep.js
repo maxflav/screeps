@@ -72,7 +72,7 @@ module.exports = function run(creep) {
     utils.wander(creep, true);
   }
 
-  considerMakingARoadHere();
+  considerMakingARoadHere(creep);
 };
 
 function isTargetValid(creep, target) {
@@ -255,10 +255,10 @@ function interactWithTarget(creep, target) {
 
 function considerMakingARoadHere(creep) {
   if (Math.random() < 0.001) {
-  var lastWander = creep.memory.lastWanderTime;
-  if (!lastWander || Game.time - lastWander > 20) {
-    var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
-    console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
+    var lastWander = creep.memory.lastWanderTime;
+    if (!lastWander || Game.time - lastWander > 20) {
+      var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
+      console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
+    }
   }
-}
 }
