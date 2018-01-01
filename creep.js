@@ -114,6 +114,12 @@ function isTargetValid(creep, target) {
     return valid;
   }
 
+  if (target instanceof Resource) {
+    var valid = fullness < 1 && target.amount > 0;
+    debug(creep, "resource valid = " + valid + " because fullness = " + fullness + " & resource.amount = " + target.amount);
+    return valid;
+  }
+
   if (target instanceof ConstructionSite ||
       target instanceof StructureController) {
     return fullness > 0;
@@ -170,6 +176,15 @@ function getNewTarget(creep) {
 }
 
 function getNewTargetSource(creep) {
+  var foundResource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
+    filter: function(resource) {
+      return resource.amount > 0 &&
+        globals.getTargetCount(resource) < 1;
+    }
+  });
+
+  if (foundResource) return foundResource;
+
   return creep.pos.findClosestByRange(FIND_SOURCES, {
     filter: function(source) {
       return source.energy > 0 &&
@@ -282,6 +297,10 @@ function interactWithTarget(creep, target) {
         return OK;
       }
     }
+  }
+
+  if (target instanceof Resource) {
+    return creep.pickup(target);
   }
 
   if (target instanceof Source) {
