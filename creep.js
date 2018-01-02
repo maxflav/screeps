@@ -158,6 +158,17 @@ function getNewTarget(creep) {
     }
   }
 
+  if (!creep.room.controller.my) {
+    console.log(creep.name + " is lost!");
+    var rooms = Object.values(Game.rooms);
+    for (var i = 0; i < rooms.length; i++) {
+      var room = rooms[i];
+      if (room.controller.my) {
+        return room.controller;
+      }
+    }
+  }
+
   var controller = creep.room.controller;
   if (controller.ticksToDowngrade < 2000 && globals.getTargetCount(controller) < 2) {
     return controller;    
