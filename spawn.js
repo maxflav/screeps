@@ -1,4 +1,4 @@
-var CREEPS_LIMIT = 8;
+var CREEPS_LIMIT = 7;
 
 module.exports = function(spawn) {
   if (!spawn) {
