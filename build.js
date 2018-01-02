@@ -20,7 +20,9 @@ module.exports = function(room) {
   });
 
   if (CONTROLLER_STRUCTURES[STRUCTURE_RAMPART][level] > 0) {
-    buildRamparts(room);
+    if (Math.random() < 0.01) {
+      buildRamparts(room);
+    }
   }
 }
 
