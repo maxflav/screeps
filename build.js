@@ -112,7 +112,10 @@ function findANiceSpot(room, type) {
       }
     }
 
-    if (map.getType(room, pos.x, pos.y) == map.EMPTY && !hasBlockedAdjacent) {
+    if (map.getType(room, pos.x, pos.y) == map.EMPTY &&
+      !hasBlockedAdjacent &&
+      (pos.x + pos.y) % 2 == 1
+    ) {
       var distanceFromSource = utils.distancePos(pos, source.pos);
       if (distanceFromSource > 3) {
         map.setType(room, pos.x, pos.y, map.BLOCKED);

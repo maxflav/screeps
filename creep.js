@@ -356,6 +356,14 @@ function considerMakingARoadHere(creep, target) {
     return;
   }
 
+  if (creep.carry.energy == 0) {
+    return;
+  }
+
+  if ((creep.pos.x + creep.pos.y) % 2 != 0) {
+    return;
+  }
+
   if (Math.random() < 0.001) {
     var lastWander = creep.memory.lastWanderTime;
     if (!lastWander || Game.time - lastWander > 20) {
