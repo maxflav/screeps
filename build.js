@@ -20,9 +20,7 @@ module.exports = function(room) {
   });
 
   if (CONTROLLER_STRUCTURES[STRUCTURE_RAMPART][level] > 0) {
-    if (Math.random() < 0.01) {
-      buildRamparts(room);
-    }
+    buildRamparts(room);
   }
 }
 
@@ -146,10 +144,14 @@ function buildRamparts(room) {
   protectPositions.forEach(function(pos) {
     for (var dx = -2; dx <= 2; dx++) {
       var x = pos.x + dx;
+      if (x <= 0 || x >= 49) continue;
       for (var dy = -2; dy <= 2; dy++) {
         var y = pos.y + dy;
-        room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+        if (y <= 0 || y >= 49) continue;
+        if (Math.random() < 0.001) {
+          room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+        }
       }
     }
-  })
+  });
 }

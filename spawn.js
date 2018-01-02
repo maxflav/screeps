@@ -1,4 +1,4 @@
-
+var CREEPS_LIMIT = 8;
 
 module.exports = function(spawn) {
   if (!spawn) {
@@ -12,8 +12,20 @@ module.exports = function(spawn) {
   if (Math.random() < 0.9) {
     return;
   }
+
   var availableEnergy = spawn.room.energyAvailable;
-  if (availableEnergy < 300 || Object.values(Game.creeps).length >= 8) {
+  if (spawn.room.energyAvailable < 300) {
+    return;
+  }
+
+  var myCreeps = Object.values(Game.creeps).filter(function(creep) { return creep.room == spawn.room });
+  var numCreeps = myCreeps.length;
+  if (numCreeps >= CREEPS_LIMIT) {
+    return;
+  }
+
+  // If we are only 1-2 creeps away from CREEPS_LIMIT, let's wait until we are at full capacity
+  if (CREEPS_LIMIT - numCreeps <= 2 && availableEnergy < spawn.room.energyCapacityAvailable) {
     return;
   }
   

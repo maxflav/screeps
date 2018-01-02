@@ -77,6 +77,10 @@ function _typeOfLookResult(lookResult) {
     }
   }
 
+  if (subtype == STRUCTURE_RAMPART) {
+    return EMPTY;
+  }
+
   if (OBSTACLE_OBJECT_TYPES.includes(subtype)) {
     return BLOCKED;
   } else {
