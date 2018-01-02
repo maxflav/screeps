@@ -89,7 +89,7 @@ module.exports = function run(creep) {
     utils.wander(creep, true);
   }
 
-  considerMakingARoadHere(creep);
+  considerMakingARoadHere(creep, target);
 };
 
 function isTargetValid(creep, target) {
@@ -351,7 +351,11 @@ function dontCrowd(creep, target) {
   }
 }
 
-function considerMakingARoadHere(creep) {
+function considerMakingARoadHere(creep, target) {
+  if (!target || target instanceof ConstructionSite) {
+    return;
+  }
+
   if (Math.random() < 0.001) {
     var lastWander = creep.memory.lastWanderTime;
     if (!lastWander || Game.time - lastWander > 20) {
