@@ -135,11 +135,11 @@ var PROTECT_STRUCTURES = [
 
 function buildRamparts(room) {
   // var exits = room.find(FIND_EXIT);
-  // var protectStructures = room.find(FIND_MY_STRUCTURES, {
-  //   filter: function(object) {
-  //     return PROTECT_STRUCTURES.includes(object.structureType);
-  //   }
-  // });
+  var protectStructures = room.find(FIND_MY_STRUCTURES, {
+    filter: function(object) {
+      return PROTECT_STRUCTURES.includes(object.structureType);
+    }
+  });
 
   var structurePositions = protectStructures.map(function(structure) { return structure.pos; });
   // var protectPositions = exits.concat(structurePositions);
