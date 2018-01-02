@@ -20,7 +20,7 @@ module.exports = function(room) {
   });
 
   if (CONTROLLER_STRUCTURES[STRUCTURE_RAMPART][level] > 0) {
-    buildARampartMaybe(room);
+    buildRamparts(room);
   }
 }
 
@@ -124,29 +124,30 @@ function findANiceSpot(room, type) {
   return null;
 }
 
-// Dumb but will *eventually* cover all the spots
-function buildARampartMaybe(room) {
+var PROTECT_STRUCTURES = [
+  STRUCTURE_TOWER,
+  STRUCTURE_SPAWN,
+  STRUCTURE_CONTROLLER,
+]
+
+function buildRamparts(room) {
   var exits = room.find(FIND_EXIT);
-  var towers = room.find(FIND_MY_STRUCTURES, {
+  var protectStructures = room.find(FIND_MY_STRUCTURES, {
     filter: function(object) {
-      return object.structureType == STRUCTURE_TOWER;
+      return PROTECT_STRUCTURES.includes(object.structureType);
     }
   });
 
-  var towerPositions = towers.map(function(tower) { return tower.pos; });
-  var protectPositions = exits.concat(towerPositions);
+  var structurePositions = protectStructures.map(function(structure) { return structure.pos; });
+  var protectPositions = exits.concat(structurePositions);
 
-  if (!protectPositions || !protectPositions.length) {
-    console.log("This room has no exits or towers?");
-    return;
-  }
-
-  var exit = utils.pick(protectPositions);
-  var dx = Math.floor(Math.random() * 5 - 2); // [-2, -1, 0, 1, 2]
-  var dy = Math.floor(Math.random() * 5 - 2);
-
-  var x = exit.x + dx;
-  var y = exit.y + dy;
-
-  var result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+  protectPositions.forEach(function(pos) {
+    for (var dx = -2; dx <= 2; dx++) {
+      var x = pos.x + dx;
+      for (var dy = -2; dy <= 2; dy++) {
+        var y = pos.y + dy;
+        room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+      }
+    }
+  })
 }
