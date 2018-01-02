@@ -141,6 +141,8 @@ function buildRamparts(room) {
   var structurePositions = protectStructures.map(function(structure) { return structure.pos; });
   var protectPositions = exits.concat(structurePositions);
 
+  var potentialRampartPositions = [];
+
   protectPositions.forEach(function(pos) {
     for (var dx = -2; dx <= 2; dx++) {
       var x = pos.x + dx;
@@ -148,11 +150,17 @@ function buildRamparts(room) {
       for (var dy = -2; dy <= 2; dy++) {
         var y = pos.y + dy;
         if (y <= 0 || y >= 49) continue;
-        if (Math.random() < 0.01) {
-          console.log("Attempting to build a rampart at " + x + ", " + y);
-          room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+        if (map.isRampart(room, x, y)) {
+          continue;
         }
+        potentialRampartPositions.push({x: x, y: y});
       }
     }
   });
+
+  for (var i = 0; i < 5; i++) {
+    var pos = utils.pick(potentialRampartPositions);
+    console.log("Attempting to build a rampart at " + pos.x + ", " + pos.y);
+    room.createConstructionSite(pos.x, pos.y, STRUCTURE_RAMPART);
+  }
 }

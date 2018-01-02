@@ -1,5 +1,6 @@
 var MAP = {};
 var mapCache = {};
+var rampartCache = {};
 
 var EMPTY = 'empty';
 var WALKABLE = 'walkable';
@@ -27,9 +28,27 @@ MAP.setType = function(room, x, y, type) {
   mapCache[x][y] = type;
 }
 
+MAP.isRampart = function(room, x, y) {
+  if (x in rampartCache && y in rampartCache[x]) {
+    return rampartCache[x][y];
+  }
+
+  if (!(x in rampartCache)) {
+    rampartCache[x] = {};
+  }
+
+  var result = _isRampart(room, x, y);
+  rampartCache[x][y] = result;
+  return result;
+}
+
 module.exports = MAP;
 
 function _getType(room, x, y) {
+  if (x < 0 || y < 0 || x > 49 || y > 49) {
+    return BLOCKED;
+  }
+
   var lookResults;
   try {
     lookResults = room.lookAt(x, y);
@@ -86,4 +105,23 @@ function _typeOfLookResult(lookResult) {
   } else {
     return WALKABLE;
   }
+}
+
+function _isRampart(room, x, y) {
+  if (x < 0 || y < 0 || x > 49 || y > 49) {
+    return false;
+  }
+
+  var lookResults = room.lookAt(x, y);
+  for (var i = 0; i < lookResults.length; i++) {
+    var lookResult = lookResults[i];
+    if (lookResult.structure && lookResult.structure.structureType == STRUCTURE_RAMPART) {
+      return true;
+    }
+    if (lookResult.constructionSite && lookResult.constructionSite.structureType == STRUCTURE_RAMPART) {
+      return true;
+    }
+  }
+
+  return false;
 }
