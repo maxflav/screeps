@@ -149,6 +149,7 @@ function buildRamparts(room) {
         var y = pos.y + dy;
         if (y <= 0 || y >= 49) continue;
         if (Math.random() < 0.001) {
+          console.log("Attempting to build a rampart at " + x + ", " + y);
           room.createConstructionSite(x, y, STRUCTURE_RAMPART);
         }
       }

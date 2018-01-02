@@ -134,8 +134,8 @@ function isTargetValid(creep, target) {
 }
 
 function getNewTarget(creep) {
-  // - if I have <= 50% energy capacity, my target is a source. Just pick the closest one?
-  // - I have > 50% energy capacity.
+  // - if I have <= 20% energy capacity, my target is a source. Just pick the closest one?
+  // - I have > 20% energy capacity.
   // -- 1. harvest dump. Closest amongst unfilled extensions/spawn.
   // -- 2a. construction site.
   // --- by type: Extension, tower, wall, road, ..., then by distance.
@@ -144,7 +144,7 @@ function getNewTarget(creep) {
 
   debug(creep, "getting new target");
   var target = null;
-  if (creep.carry.energy <= creep.carryCapacity / 2) {
+  if (creep.carry.energy <= creep.carryCapacity / 5) {
     debug(creep, "low on energy, will target a source");
     target = getNewTargetSource(creep);
     if (target != null) {
