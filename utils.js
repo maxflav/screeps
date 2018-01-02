@@ -9,8 +9,12 @@
 
 var utils = {};
 
+utils.distancePos = function(a, b) {
+  return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+};
+
 utils.distance = function(a, b) {
-	return Math.max(Math.abs(a.pos.x - b.pos.x), Math.abs(a.pos.y - b.pos.y));
+	return utils.distancePos(a.pos, b.pos);
 };
 
 utils.wander = function(creep, idly) {

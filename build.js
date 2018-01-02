@@ -70,7 +70,7 @@ function findANiceSpot(room, type) {
   if (!positionStack || !positionStack.length) {
     if (!source && type == STRUCTURE_EXTENSION) {
       var sources = room.find(FIND_SOURCES);
-      source = utils.pickOne(sources);
+      source = utils.pick(sources);
     }
     if (!source) {
       source = room.controller;
@@ -113,7 +113,7 @@ function findANiceSpot(room, type) {
     }
 
     if (map.getType(room, pos.x, pos.y) == map.EMPTY && !hasBlockedAdjacent) {
-      var distanceFromSource = utils.distance(pos, source.pos);
+      var distanceFromSource = utils.distancePos(pos, source.pos);
       if (distanceFromSource > 3) {
         map.setType(room, pos.x, pos.y, map.BLOCKED);
         return pos;

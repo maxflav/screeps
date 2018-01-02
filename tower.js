@@ -48,6 +48,10 @@ function repair(tower) {
         // If it's a road, only repair if it's below 50%
         return object.hits < object.hitsMax / 2;
       }
+      if (object.structureType == STRUCTURE_WALL) {
+        // Never repair walls?
+        return false;
+      }
 
       // Otherwise repair things which are down by at least 1000 hp
       return object.hits <= object.hitsMax - 1000;
