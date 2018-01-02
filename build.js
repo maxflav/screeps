@@ -7,7 +7,7 @@ var BUILD_THESE = [
 ];
 
 module.exports = function(room) {
-  if (Math.random() < 0.99) {
+  if (Math.random() < 0.9) {
     return;
   }
 
@@ -148,7 +148,7 @@ function buildRamparts(room) {
       for (var dy = -2; dy <= 2; dy++) {
         var y = pos.y + dy;
         if (y <= 0 || y >= 49) continue;
-        if (Math.random() < 0.001) {
+        if (Math.random() < 0.01) {
           console.log("Attempting to build a rampart at " + x + ", " + y);
           room.createConstructionSite(x, y, STRUCTURE_RAMPART);
         }
