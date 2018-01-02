@@ -1,36 +1,27 @@
 var map = require('map');
 var utils = require('utils');
 
+var BUILD_THESE = [
+  STRUCTURE_EXTENSION,
+  STRUCTURE_TOWER
+];
+
 module.exports = function(room) {
+  if (Math.random() < 0.99) {
+    return;
+  }
+
   var controller = room.controller;
   var level = controller.level;
-  var extensionLimit = EXTENSION_LIMIT_PER_LEVEL[level] || 0;
-  var towerLimit = TOWER_LIMIT_PER_LEVEL[level] || 0;
 
-  makeSureWeHave(room, towerLimit, STRUCTURE_TOWER);
-  makeSureWeHave(room, extensionLimit, STRUCTURE_EXTENSION);
-}
+  BUILD_THESE.forEach(function(type) {
+    var limit = CONTROLLER_STRUCTURES[type][level];
+    makeSureWeHave(room, limit, type);
+  });
 
-var EXTENSION_LIMIT_PER_LEVEL = {
-  1: 0,
-  2: 5,
-  3: 10,
-  4: 20,
-  5: 30,
-  6: 40,
-  7: 50,
-  8: 60,
-};
-
-var TOWER_LIMIT_PER_LEVEL = {
-  1: 0,
-  2: 0,
-  3: 1,
-  4: 1,
-  5: 2,
-  6: 2,
-  7: 3,
-  8: 6,
+  if (CONTROLLER_STRUCTURES[STRUCTURE_RAMPART][level] > 0) {
+    buildARampartMaybe(room);
+  }
 }
 
 function makeSureWeHave(room, limit, type) {
@@ -68,7 +59,6 @@ function makeSureWeHave(room, limit, type) {
 
 
 var source;
-
 var positionStack;
 
 function findANiceSpot(room, type) {
@@ -132,4 +122,22 @@ function findANiceSpot(room, type) {
   }
   
   return null;
+}
+
+// Dumb but will *eventually* cover all the spots
+function buildARampartMaybe(room) {
+  var exits = room.find(FIND_EXIT);
+  if (!exits || !exits.length) {
+    console.log("This room has no exits?");
+    return;
+  }
+
+  var exit = utils.pick(exits);
+  var dx = Math.floor(Math.random() * 5 - 2); // [-2, -1, 0, 1, 2]
+  var dy = Math.floor(Math.random() * 5 - 2);
+
+  var x = exit.x + dx;
+  var y = exit.y + dy;
+
+  room.createConstructionSite(x, y, STRUCTURE_RAMPART);
 }
