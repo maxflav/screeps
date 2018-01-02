@@ -127,17 +127,26 @@ function findANiceSpot(room, type) {
 // Dumb but will *eventually* cover all the spots
 function buildARampartMaybe(room) {
   var exits = room.find(FIND_EXIT);
-  if (!exits || !exits.length) {
-    console.log("This room has no exits?");
+  var towers = room.find(FIND_MY_STRUCTURES, {
+    filter: function(object) {
+      return object.structureType == STRUCTURE_TOWER;
+    }
+  });
+
+  var towerPositions = towers.map(function(tower) { return tower.pos; });
+  var protectPositions = exits.concat(towerPositions);
+
+  if (!protectPositions || !protectPositions.length) {
+    console.log("This room has no exits or towers?");
     return;
   }
 
-  var exit = utils.pick(exits);
+  var exit = utils.pick(protectPositions);
   var dx = Math.floor(Math.random() * 5 - 2); // [-2, -1, 0, 1, 2]
   var dy = Math.floor(Math.random() * 5 - 2);
 
   var x = exit.x + dx;
   var y = exit.y + dy;
 
-  room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+  var result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
 }
