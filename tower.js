@@ -34,9 +34,6 @@ function repair(tower) {
 
   var repairTargets = tower.room.find(FIND_STRUCTURES, {
     filter: function(object) {
-      if (object instanceof OwnedStructure && !object.my) {
-        return false;
-      }
       if (!object.hits) {
         // Things without hit points can't be repaired
         return false;
@@ -46,10 +43,13 @@ function repair(tower) {
       }
       if (object.structureType == STRUCTURE_ROAD) {
         // If it's a road, only repair if it's below 50%
-        return object.hits < object.hitsMax / 2;
+        return object.hits < (object.hitsMax * 0.5);
       }
       if (object.structureType == STRUCTURE_WALL) {
         // Never repair walls?
+        return false;
+      }
+      if (object instanceof OwnedStructure && !object.my) {
         return false;
       }
 

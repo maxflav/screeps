@@ -365,10 +365,7 @@ function considerMakingARoadHere(creep, target) {
   }
 
   if (Math.random() < 0.001) {
-    var lastWander = creep.memory.lastWanderTime;
-    if (!lastWander || Game.time - lastWander > 20) {
-      var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
-      console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
-    }
+    var madeRoad = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
+    console.log("Make a road at " + creep.name + "'s position: " + madeRoad);
   }
 }

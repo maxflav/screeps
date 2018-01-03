@@ -1,6 +1,7 @@
 var build = require('build');
 var creepsLib = require('creep');
 var globals = require('globals');
+var scout = require('scout');
 var spawnLib = require('spawn');
 var towerLib = require('tower');
 var utils = require('utils');
@@ -31,7 +32,11 @@ module.exports.loop = function () {
     var creep = Game.creeps[name];
 
     try {
-      creepsLib(creep);
+      if (creep.memory.role == 'scout') {
+        scout(creep);
+      } else {
+        creepsLib(creep);
+      }
     } catch (e) {
       errors.push(e);
     }

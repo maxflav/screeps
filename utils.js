@@ -22,8 +22,7 @@ utils.wander = function(creep, idly) {
   creep.move(utils.pick(movements));
 
   if (idly) {
-    creep.say(creep.name + '?');
-    creep.memory.lastWanderTime = Game.time;
+    creep.say('?');
   }
 }
 
