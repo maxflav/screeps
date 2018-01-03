@@ -32,7 +32,7 @@ module.exports.loop = function () {
     var creep = Game.creeps[name];
 
     try {
-      if (creep.memory.role == 'scout') {
+      if (creep.memory.scout) {
         scout(creep);
       } else {
         creepsLib(creep);

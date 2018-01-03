@@ -154,7 +154,7 @@ function getNewTarget(creep) {
     debug(creep, "found no valid source");
 
     if (creep.carry.energy == 0) {
-      return null;
+      return getNewTargetRemoteMine(creep);
     }
   }
 
@@ -203,6 +203,10 @@ function getNewTargetSource(creep) {
         globals.getTargetCount(source) < sources.getSourceSlots(source);
     }
   });
+}
+
+function getNewTargetRemoteMine(creep) {
+  return null;
 }
 
 var DUMP_TARGETS = [

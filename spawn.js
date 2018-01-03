@@ -1,4 +1,5 @@
-var CREEPS_LIMIT = 6;
+var WORKER_LIMIT = 6;
+var SCOUTS_LIMIT = 1;
 
 module.exports = function(spawn) {
   if (!spawn) {
@@ -18,14 +19,38 @@ module.exports = function(spawn) {
     return;
   }
 
-  var myCreeps = Object.values(Game.creeps).filter(function(creep) { return creep.room == spawn.room });
-  var numCreeps = myCreeps.length;
-  if (numCreeps >= CREEPS_LIMIT) {
+  var myCreeps = Object.values(Game.creeps).filter(function(creep) {
+    return !creep.memory.home || creep.memory.home == spawn.room.name
+  });
+
+  var numWorkers = 0;
+  var numScouts = 0;
+  myCreeps.forEach(function(creep) {
+    if (creep.memory.scout) {
+      numScouts++;
+    } else {
+      numWorkers++;
+    }
+  });
+
+  if (numScouts < SCOUTS_LIMIT) {
+    var name = 'Scout ';
+    var num = (Game.time + 8788) % (26 * 26 * 26);
+    for (var c = 0; c < 3; c++) {
+      name += String.fromCharCode(65 + num % 26);
+      num /= 26;
+    }
+
+    console.log('Spawning a scout ' + name + ' with ' + parts);
+    result = Game.spawns['Spawn1'].spawnCreep([MOVE], name, {memory: {home: spawn.room.name, scout: true}});
+  }
+
+  if (numWorkers >= WORKER_LIMIT) {
     return;
   }
 
-  // If we are only 1-2 creeps away from CREEPS_LIMIT, let's wait until we are at full capacity
-  if (CREEPS_LIMIT - numCreeps <= 2 && availableEnergy < spawn.room.energyCapacityAvailable) {
+  // If we are only 1-2 creeps away from WORKER_LIMIT, let's wait until we are at full capacity
+  if (WORKER_LIMIT - numWorkers <= 2 && availableEnergy < spawn.room.energyCapacityAvailable) {
     return;
   }
   
@@ -51,7 +76,7 @@ module.exports = function(spawn) {
   }
 
   console.log('Spawning ' + name + ' with ' + parts);
-  result = Game.spawns['Spawn1'].spawnCreep(parts, name);
+  result = Game.spawns['Spawn1'].spawnCreep(parts, name, {memory: {home: spawn.room.name}});
 
   if (result != OK) {
     console.log('Failed to create ' + name + ': ' + result);
