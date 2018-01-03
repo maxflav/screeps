@@ -21,6 +21,7 @@ var debug = require('debug');
 var globals = require('globals');
 var sources = require('sources');
 var utils = require('utils');
+var _ = require('lodash');
 
 // If we get these results, invalidate my target
 var BAD_RESULTS = [
@@ -98,7 +99,7 @@ function isTargetValid(creep, target) {
     return false;
   }
 
-  var fullness = creep.carry.energy / creep.carryCapacity;
+  var fullness = _.sum(creep.carry) / creep.carryCapacity;
 
   if (target instanceof Structure) {
     if (target.hits < target.hitsMax && fullness > 0) {
