@@ -1,4 +1,4 @@
-var WORKER_LIMIT = 6;
+var WORKER_LIMIT = 7;
 var SCOUTS_LIMIT = 1;
 
 module.exports = function(spawn) {
@@ -41,7 +41,7 @@ module.exports = function(spawn) {
       num /= 26;
     }
 
-    console.log('Spawning a scout ' + name + ' with ' + parts);
+    console.log('Spawning a scout ' + name);
     result = Game.spawns['Spawn1'].spawnCreep([MOVE], name, {memory: {home: spawn.room.name, scout: true}});
   }
 

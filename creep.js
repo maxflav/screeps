@@ -49,14 +49,17 @@ module.exports = function run(creep) {
 
   var target = null;
   if (creep.memory.targetId) {
-    target = Game.getObjectById(creep.memory.targetId);
-    if (!target && creep.memory.targetId.length < 10) {
+    debug(creep, "has this targetId: " + creep.memory.targetId);
+    if (creep.memory.targetId.length < 10) {
       target = new RoomPosition(25, 25, creep.memory.targetId);
+    } else {
+      target = Game.getObjectById(creep.memory.targetId);
     }
   }
 
   if (target) {
     if (!isTargetValid(creep, target)) {
+      debug(creep, "target is not valid " + target);
       globals.decrementTargetCount(target);
       creep.memory.targetId = null;
       target = null;
@@ -71,7 +74,11 @@ module.exports = function run(creep) {
       return null;
     }
     globals.incrementTargetCount(target);
-    creep.memory.targetId = target.id;
+    if (target instanceof RoomPosition) {
+      creep.memory.targetId = target.roomName;
+    } else {
+      creep.memory.targetId = target.id;
+    }
   }
 
   var moveResult = creep.moveTo(target, {
@@ -215,6 +222,7 @@ function getNewTargetSource(creep) {
 }
 
 function getNewTargetRemoteMine(creep) {
+  debug(creep, "Thinking about remote mines");
   if (!Memory.scoutInfo) {
     return null;
   }
@@ -229,7 +237,14 @@ function getNewTargetRemoteMine(creep) {
     return (assignedHere < numSources);
   });
 
-  return utils.pick(roomNames);
+  if (!roomNames.length) {
+      return null;
+  }
+  debug(creep, "Considering these remote mines " + JSON.stringify(roomNames));
+
+  var picked = utils.pick(roomNames);
+  debug(creep, "Picked this one: " + picked);
+  return new RoomPosition(25, 25, picked);
 }
 
 var DUMP_TARGETS = [
