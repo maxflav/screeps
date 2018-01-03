@@ -62,9 +62,9 @@ function repair(tower) {
     return ERR_INVALID_TARGET;
   }
 
-  // Find the one with the lowest hits by %.
+  // Find the one with the lowest hits.
   var target = utils.maximize(repairTargets, function(target) {
-    return -(target.hits / target.hitsMax);
+    return -target.hits;
   });
 
   return tower.repair(target);
