@@ -219,7 +219,17 @@ function getNewTargetRemoteMine(creep) {
     return null;
   }
 
-  return null;
+  var roomNames = Object.keys(Memory.scoutInfo).filter(function(name) {
+    var numSources = Memory.scoutInfo[name].sources;
+    if (!numSources || numSources <= 0) {
+      return false;
+    }
+
+    var assignedHere = globals.getTargetCount(name);
+    return (assignedHere < numSources);
+  });
+
+  return utils.pick(roomNames);
 }
 
 var DUMP_TARGETS = [

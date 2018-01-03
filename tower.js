@@ -22,7 +22,7 @@ function shoot(tower) {
   if (!target) {
     return ERR_INVALID_TARGET;
   }
-  console.log(tower, "Tower found a target to shoot " + target.id);
+  console.log(tower, "Tower found a target to shoot " + target);
   return tower.attack(target);
 }
 
