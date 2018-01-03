@@ -71,8 +71,8 @@ function isRoomAvailable(creep) {
     }
   }
 
-  var hostileTowers = countHostileTowers(creep);
-  if (hostileTowers > 0) {
+  var hostileStructures = countHostileStructures(creep);
+  if (hostileStructures > 0) {
     return false;
   }
 
@@ -84,12 +84,8 @@ function isRoomAvailable(creep) {
   return true;
 }
 
-function countHostileTowers(creep) {
-  return creep.room.find(FIND_HOSTILE_STRUCTURES, {
-    filter: function(object) {
-      return object.structureType == STRUCTURE_TOWER;
-    }
-  });
+function countHostileStructures(creep) {
+  return creep.room.find(FIND_HOSTILE_STRUCTURES).length;
 }
 
 function countHostileAttackCreeps(creep) {
@@ -97,7 +93,7 @@ function countHostileAttackCreeps(creep) {
     filter: function(enemy) {
       return enemy.getActiveBodyparts(ATTACK) > 0 || enemy.getActiveBodyparts(RANGED_ATTACK) > 0;
     }
-  });
+  }).length;
 }
 
 function countSources(creep) {

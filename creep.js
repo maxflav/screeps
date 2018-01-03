@@ -50,6 +50,9 @@ module.exports = function run(creep) {
   var target = null;
   if (creep.memory.targetId) {
     target = Game.getObjectById(creep.memory.targetId);
+    if (!target && creep.memory.targetId.length < 10) {
+      target = new RoomPosition(25, 25, creep.memory.targetId);
+    }
   }
 
   if (target) {
@@ -131,6 +134,11 @@ function isTargetValid(creep, target) {
     return fullness > 0 && target.energy < target.energyCapacity;
   }
 
+  if (target instanceof RoomPosition) {
+    // remote rooms are valid if it's not the current room
+    return target.roomName != creep.room.name;
+  }
+
   return false;
 }
 
@@ -207,6 +215,10 @@ function getNewTargetSource(creep) {
 }
 
 function getNewTargetRemoteMine(creep) {
+  if (!Memory.scoutInfo) {
+    return null;
+  }
+
   return null;
 }
 
@@ -305,6 +317,10 @@ function getNewTargetToRepair(creep) {
 }
 
 function interactWithTarget(creep, target) {
+  if (target instanceof RoomPosition) {
+    return OK;
+  }
+
   if (target instanceof Structure) {
     if (target.hits < target.hitsMax && creep.carry.energy > 0) {
       var repairResult = creep.repair(target);
