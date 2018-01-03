@@ -22,12 +22,8 @@ function tryToMove(creep) {
     // Don't get stuck forever
     return false;
   }
-  if (creep.room.name == creep.memory.to.room && Math.random() < 0.25) {
-    // I'm already in the room I wanted to go to
-    return false;
-  }
 
-  var moved = creep.moveTo(new RoomPosition(creep.memory.to.x, creep.memory.to.y, creep.memory.to.room));
+  var moved = creep.moveTo(new RoomPosition(creep.memory.to.x, creep.memory.to.y, creep.room.name));
   if (moved == OK) {
     return true;
   } else {
@@ -36,7 +32,11 @@ function tryToMove(creep) {
 }
 
 function getNewTarget(creep) {
-  return null;
+  var exits = creep.room.find(FIND_EXIT);
+  if (!exits || !exits.length) {
+    return null;
+  }
+  return utils.pick(exits);
 }
 
 function scouting(creep) {

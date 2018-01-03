@@ -45,10 +45,6 @@ function repair(tower) {
         // If it's a road, only repair if it's below 50%
         return object.hits < (object.hitsMax * 0.5);
       }
-      if (object.structureType == STRUCTURE_WALL) {
-        // Never repair walls?
-        return false;
-      }
       if (object instanceof OwnedStructure && !object.my) {
         return false;
       }
