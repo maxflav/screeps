@@ -176,10 +176,13 @@ function getNewTarget(creep) {
 
   if (!creep.room.controller.my) {
     console.log(creep.name + " is lost!");
+    if (creep.memory.home) {
+      return Game.rooms[creep.memory.home].controller;
+    }
     var rooms = Object.values(Game.rooms);
     for (var i = 0; i < rooms.length; i++) {
       var room = rooms[i];
-      if (room.controller.my) {
+      if (room.controller && room.controller.my) {
         return room.controller;
       }
     }
