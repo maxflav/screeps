@@ -65,7 +65,7 @@ module.exports = function(spawn) {
   availableEnergy -= 200;
 
   var partToAddIndex = 0;
-  while (parts.length < 50 && availableEnergy >= BODYPART_COST[parts[partToAddIndex]]) {
+  while (parts.length < 40 && availableEnergy >= BODYPART_COST[parts[partToAddIndex]]) {
     var addingPart = parts[partToAddIndex];
     partToAddIndex++;
     parts = parts.concat(addingPart);
