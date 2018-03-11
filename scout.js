@@ -76,10 +76,10 @@ function isRoomAvailable(creep) {
     return false;
   }
 
-  var hostileAttackCreeps = countHostileAttackCreeps(creep);
-  if (hostileAttackCreeps > 0) {
-    return false;
-  }
+  // var hostileAttackCreeps = countHostileAttackCreeps(creep);
+  // if (hostileAttackCreeps > 0) {
+  //   return false;
+  // }
 
   return true;
 }

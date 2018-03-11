@@ -187,7 +187,7 @@ function getNewTarget(creep) {
   }
 
   if (!creep.room.controller.my) {
-    console.log(creep.name + " is lost!");
+    debug(creep.name + " is lost!");
     if (creep.memory.home) {
       return Game.rooms[creep.memory.home].controller;
     }
@@ -278,7 +278,13 @@ function getNewTargetRemoteMine(creep) {
   }
   debug(creep, "Considering these remote mines " + JSON.stringify(roomNames));
 
-  var picked = utils.pick(roomNames);
+  var picked = utils.minimize(roomNames, function(room) {
+    var assignedHere = globals.getTargetCount(name);
+    var numSources = Memory.scoutInfo[name].sources;
+    var dist = utils.roomDist(room, creep.room);
+
+    return dist * 100 - numSources + assignedHere;
+  });
   debug(creep, "Picked this one: " + picked);
   return new RoomPosition(25, 25, picked);
 }
