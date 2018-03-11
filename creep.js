@@ -44,6 +44,9 @@ var BAD_RESULTS = [
 
 module.exports = function run(creep) {
   creep.notifyWhenAttacked(false);
+  if (creep.spawning) {
+    return;
+  }
 
   if (Memory.debugAll || Memory.debug) {
     creep.say(creep.name);
