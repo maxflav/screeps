@@ -43,6 +43,8 @@ var BAD_RESULTS = [
 
 
 module.exports = function run(creep) {
+  creep.notifyWhenAttacked(false);
+
   if (Memory.debugAll || Memory.debug) {
     creep.say(creep.name);
   }
@@ -146,10 +148,16 @@ function isTargetValid(creep, target) {
     return target.roomName != creep.room.name;
   }
 
+  if (target instanceof Creep) {
+    // A creep is a valid target to attack if it's an enemy in the same room and I can attack
+    return !target.my && target.room == creep.room && (creep.getActiveBodyparts(ATTACK) > 0);
+  }
+
   return false;
 }
 
 function getNewTarget(creep) {
+  // - enemies to attack?
   // - if I have <= 20% energy capacity, my target is a source. Just pick the closest one?
   // - I have > 20% energy capacity.
   // -- 1. harvest dump. Closest amongst unfilled extensions/spawn.
@@ -160,6 +168,10 @@ function getNewTarget(creep) {
 
   debug(creep, "getting new target");
   var target = null;
+
+  target = getNewTargetEnemyCreep(creep);
+  if (target != null) { return target; }
+
   if (creep.carry.energy <= creep.carryCapacity / 5) {
     debug(creep, "low on energy, will target a source");
     target = getNewTargetSource(creep);
@@ -203,6 +215,27 @@ function getNewTarget(creep) {
   if (target != null) { return target; }
 
   return controller;
+}
+
+function getNewTargetEnemyCreep(creep) {
+  if (creep.getActiveBodyparts(ATTACK) == 0) {
+    return null;
+  }
+
+  // focus on the enemy with ATTACK.
+  // If none have ATTACK, then no need to fight anything. unless you feel like it
+  var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+
+  var baddies = hostiles.filter(function(hostile) {
+    return hostile.getActiveBodyparts(ATTACK) > 0;
+  })
+  if (baddies.length > 0) {
+    return utils.pick(baddies);
+  }
+
+  if (hostiles.length > 0 && Math.random() < 0.15) {
+    return utils.pick(hostiles);
+  }
 }
 
 function getNewTargetSource(creep) {
@@ -386,6 +419,10 @@ function interactWithTarget(creep, target) {
       dontCrowd(creep, target);
     }
     return upgradeResult;
+  }
+
+  if (target instanceof Creep) {
+    return creep.attack(target);
   }
 
   return ERR_INVALID_TARGET;
