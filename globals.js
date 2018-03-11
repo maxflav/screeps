@@ -21,7 +21,7 @@ var globals = {
 
   incrementTargetCount: function(target) {
     if (!target) return;
-    var id = target.id;
+    var id = target.id || target;
     if (target instanceof RoomPosition) {
       id = target.roomName;
     }
@@ -40,7 +40,7 @@ var globals = {
 
   decrementTargetCount: function(target) {
     if (!target) return;
-    var id = target.id;
+    var id = target.id || target;
     if (target instanceof RoomPosition) {
       id = target.roomName;
     }
@@ -55,7 +55,7 @@ var globals = {
 
   getTargetCount: function(target) {
     if (!target) return 0;
-    var id = target.id;
+    var id = target.id || target;
     if (target instanceof RoomPosition) {
       id = target.roomName;
     }
