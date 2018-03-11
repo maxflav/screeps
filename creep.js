@@ -157,6 +157,7 @@ function isTargetValid(creep, target) {
 }
 
 function getNewTarget(creep) {
+  // - enemies to attack?
   // - if I have <= 20% energy capacity, my target is a source. Just pick the closest one?
   // - I have > 20% energy capacity.
   // -- 1. harvest dump. Closest amongst unfilled extensions/spawn.
@@ -167,6 +168,10 @@ function getNewTarget(creep) {
 
   debug(creep, "getting new target");
   var target = null;
+
+  target = getNewTargetEnemyCreep(creep);
+  if (target != null) { return target; }
+
   if (creep.carry.energy <= creep.carryCapacity / 5) {
     debug(creep, "low on energy, will target a source");
     target = getNewTargetSource(creep);
@@ -210,6 +215,27 @@ function getNewTarget(creep) {
   if (target != null) { return target; }
 
   return controller;
+}
+
+function getNewTargetEnemyCreep(creep) {
+  if (creep.getActiveBodyparts(ATTACK) == 0) {
+    return null;
+  }
+
+  // focus on the enemy with ATTACK.
+  // If none have ATTACK, then no need to fight anything. unless you feel like it
+  var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+
+  var baddies = hostiles.filter(function(hostile) {
+    return hostile.getActiveBodyparts(ATTACK) > 0;
+  })
+  if (baddies.length > 0) {
+    return utils.pick(baddies);
+  }
+
+  if (hostiles.length > 0 && Math.random() < 0.5) {
+    return utils.pick(hostiles);
+  }
 }
 
 function getNewTargetSource(creep) {
