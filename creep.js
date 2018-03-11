@@ -233,7 +233,7 @@ function getNewTargetEnemyCreep(creep) {
     return utils.pick(baddies);
   }
 
-  if (hostiles.length > 0 && Math.random() < 0.5) {
+  if (hostiles.length > 0 && Math.random() < 0.15) {
     return utils.pick(hostiles);
   }
 }
