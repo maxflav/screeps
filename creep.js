@@ -136,6 +136,11 @@ function isTargetValid(creep, target) {
     return valid;
   }
 
+  if (target instanceof Tombstone) {
+    var valid = fullness < 1 && target.store.RESOURCE_ENERGY > 0;
+    return valid;
+  }
+
   if (target instanceof ConstructionSite ||
       target instanceof StructureController) {
     return fullness > 0;
@@ -242,6 +247,16 @@ function getNewTargetEnemyCreep(creep) {
 }
 
 function getNewTargetSource(creep) {
+  var foundTombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
+    filter: function(tombstone) {
+      var distance = utils.distance(creep, tombstone);
+      var amount = tombstone.store.RESOURCE_ENERGY;
+      return amount > 0 && globals.getTargetCount(tombstone) < 1;
+    }
+  });
+
+  if (foundTombstone) return foundTombstone;
+
   var foundResource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
     filter: function(resource) {
       var distance = utils.distance(creep, resource);
@@ -408,6 +423,10 @@ function interactWithTarget(creep, target) {
 
   if (target instanceof Source) {
     return creep.harvest(target);
+  }
+
+  if (target instanceof Tombstone) {
+    return creep.withdraw(target, RESOURCE_ENERGY);
   }
 
   if (target instanceof ConstructionSite) {
