@@ -146,6 +146,11 @@ function isTargetValid(creep, target) {
     return target.roomName != creep.room.name;
   }
 
+  if (target instanceof Creep) {
+    // A creep is a valid target to attack if it's an enemy in the same room and I can attack
+    return !target.my && target.room == creep.room && (creep.getActiveBodyparts(ATTACK) > 0);
+  }
+
   return false;
 }
 
@@ -386,6 +391,10 @@ function interactWithTarget(creep, target) {
       dontCrowd(creep, target);
     }
     return upgradeResult;
+  }
+
+  if (target instanceof Creep) {
+    return creep.attack(target);
   }
 
   return ERR_INVALID_TARGET;
