@@ -280,7 +280,7 @@ function getNewTargetRemoteMine(creep) {
 
   var picked = utils.minimize(roomNames, function(room) {
     var assignedHere = globals.getTargetCount(room);
-    var numSources = Memory.scoutInfo[name].sources;
+    var numSources = Memory.scoutInfo[room].sources;
     var dist = utils.roomDist(room, creep.room);
 
     return dist * 100 - numSources + assignedHere;
