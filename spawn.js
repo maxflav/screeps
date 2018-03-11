@@ -1,4 +1,4 @@
-var WORKER_LIMIT = 4;
+var WORKER_LIMIT = 6;
 var SCOUTS_LIMIT = 0;
 
 module.exports = function(spawn) {
@@ -65,14 +65,15 @@ module.exports = function(spawn) {
   availableEnergy -= 200;
 
   var partToAddIndex = 0;
-  while (parts.length < 40 && availableEnergy >= BODYPART_COST[parts[partToAddIndex]]) {
+  while (parts.length < 35 && availableEnergy >= BODYPART_COST[parts[partToAddIndex]]) {
     var addingPart = parts[partToAddIndex];
     partToAddIndex++;
     parts = parts.concat(addingPart);
     availableEnergy -= BODYPART_COST[addingPart];
   }
-  if (availableEnergy >= 50) {
-    parts.push(CARRY);
+  while (availableEnergy >= 130 && parts.length <= 45) {
+    parts.push(ATTACK);
+    parts.push(MOVE);
   }
 
   console.log('Spawning ' + name + ' with ' + parts);
