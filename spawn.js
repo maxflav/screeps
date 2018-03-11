@@ -1,5 +1,5 @@
 var WORKER_LIMIT = 6;
-var SCOUTS_LIMIT = 0;
+var SCOUTS_LIMIT = 1;
 
 module.exports = function(spawn) {
   if (!spawn) {

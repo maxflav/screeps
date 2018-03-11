@@ -44,6 +44,12 @@ utils.maximize = function(list, func) {
   return bestItem;
 }
 
+utils.minimize = function(list, func) {
+  return utils.maximize(list, function(item) {
+    return -1 * func(item);
+  })
+}
+
 var roomRegex = /([EW])([0-9]+)([NS])([0-9]+)/;
 
 utils.roomDist = function(room1, room2) {
