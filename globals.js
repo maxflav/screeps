@@ -21,6 +21,10 @@ var globals = {
 
   incrementTargetCount: function(target) {
     if (!target) return;
+    var id = target.id;
+    if (target instanceof RoomPosition) {
+      id = target.roomName;
+    }
     globals.incrementTargetCountById(target.id);
   },
 
@@ -36,7 +40,11 @@ var globals = {
 
   decrementTargetCount: function(target) {
     if (!target) return;
-    globals.decrementTargetCountById(target.id);
+    var id = target.id;
+    if (target instanceof RoomPosition) {
+      id = target.roomName;
+    }
+    globals.decrementTargetCountById(id);
   },
 
   getTargetCountById: function(targetId) {
@@ -47,7 +55,11 @@ var globals = {
 
   getTargetCount: function(target) {
     if (!target) return 0;
-    return globals.getTargetCountById(target.id);
+    var id = target.id;
+    if (target instanceof RoomPosition) {
+      id = target.roomName;
+    }
+    return globals.getTargetCountById(id);
   }
 };
 

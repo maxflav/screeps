@@ -75,12 +75,12 @@ module.exports = function run(creep) {
       utils.wander(creep, true);
       return null;
     }
-    globals.incrementTargetCount(target);
     if (target instanceof RoomPosition) {
       creep.memory.targetId = target.roomName;
     } else {
       creep.memory.targetId = target.id;
     }
+    globals.incrementTargetCount(creep.memory.targetId);
   }
 
   var moveResult = creep.moveTo(target, {
