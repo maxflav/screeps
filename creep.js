@@ -230,7 +230,7 @@ function getNewTargetEnemyCreep(creep) {
   var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
 
   var baddies = hostiles.filter(function(hostile) {
-    return hostile.getActiveBodyparts(ATTACK) > 0;
+    return hostile.getActiveBodyparts(ATTACK) > 0 || hostile.getActiveBodyparts(RANGED_ATTACK) > 0;
   })
   if (baddies.length > 0) {
     return utils.pick(baddies);
