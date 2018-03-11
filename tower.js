@@ -59,13 +59,27 @@ function repair(tower) {
   }
 
   // Find the one with the lowest hits.
-  var target = utils.maximize(repairTargets, function(target) {
-    return -target.hits;
+  var target = utils.minimize(repairTargets, function(target) {
+    return target.hits;
   });
 
   return tower.repair(target);
 }
 
 function heal(tower) {
-  return ERR_INVALID_TARGET;
+    var healTargets = tower.room.find(FIND_MY_CREEPS, {
+    filter: function(creep) {
+      return !creep.spawning && creep.hits < creep.hitsMax;
+    }
+  });
+  if (!healTargets || !healTargets.length) {
+    return ERR_INVALID_TARGET;
+  }
+
+  // Find the one with the lowest hits.
+  var target = utils.minimize(healTargets, function(target) {
+    return target.hits;
+  });
+
+  return tower.heal(target);
 }

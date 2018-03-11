@@ -164,7 +164,6 @@ function buildRamparts(room) {
 
   // for (var i = 0; i < 2; i++) {
     var pos = utils.pick(potentialRampartPositions);
-    console.log("Attempting to build a rampart at " + pos.x + ", " + pos.y);
     room.createConstructionSite(pos.x, pos.y, STRUCTURE_RAMPART);
   // }
 }
