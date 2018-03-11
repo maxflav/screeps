@@ -42,7 +42,7 @@ module.exports = function(spawn) {
     }
 
     console.log('Spawning a scout ' + name);
-    result = Game.spawns['Spawn1'].spawnCreep([MOVE], name, {memory: {home: spawn.room.name, scout: true}});
+    result = spawn.spawnCreep([MOVE], name, {memory: {home: spawn.room.name, scout: true}});
   }
 
   if (numWorkers >= WORKER_LIMIT) {
@@ -77,7 +77,7 @@ module.exports = function(spawn) {
   }
 
   console.log('Spawning ' + name + ' with ' + parts);
-  result = Game.spawns['Spawn1'].spawnCreep(parts, name, {memory: {home: spawn.room.name}});
+  result = spawn.spawnCreep(parts, name, {memory: {home: spawn.room.name}});
 
   if (result != OK) {
     console.log('Failed to create ' + name + ': ' + result);

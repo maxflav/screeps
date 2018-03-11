@@ -9,8 +9,6 @@ var utils = require('utils');
 
 module.exports.loop = function () {
   var errors = [];
-  var spawn = Game.spawns['Spawn1'];
-  var room = spawn.room;
 
   try {
     globals.resetTargetCounts();
@@ -18,7 +16,15 @@ module.exports.loop = function () {
     errors.push(e);
   }
 
-  var towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+  var spawns = Object.values(Game.spawns);
+  var rooms = spawns.map(function(spawn) { return spawn.room; });
+
+  // var rooms = Object.values(Game.rooms);
+
+  var towers = [];
+  rooms.forEach(function(room) {
+    towers = towers.concat(room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}}));
+  });
   for (var i = 0; i < towers.length; i++) {
     var tower = towers[i];
     try {
@@ -42,15 +48,17 @@ module.exports.loop = function () {
     }
   }
 
-  try {
-    spawnLib(spawn);
-    build(room);
-    if (Math.random() < 0.01) {
-      clearDeadCreeps();
+  spawns.forEach(function(spawn) {
+    try {
+      spawnLib(spawn);
+      build(spawn.room);
+    } catch (e) {
+      errors.push(e);
     }
-  } catch (e) {
-    errors.push(e);
-  }
+
+  });
+
+  clearDeadCreeps();
 
   if (errors.length > 0) {
     errors.forEach(function(e) { console.log(e); });
