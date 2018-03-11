@@ -137,7 +137,7 @@ function isTargetValid(creep, target) {
   }
 
   if (target instanceof Tombstone) {
-    var valid = fullness < 1 && target.store.RESOURCE_ENERGY > 0;
+    var valid = fullness < 1 && target.store[RESOURCE_ENERGY] > 0;
     return valid;
   }
 
@@ -250,7 +250,7 @@ function getNewTargetSource(creep) {
   var foundTombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
     filter: function(tombstone) {
       var distance = utils.distance(creep, tombstone);
-      var amount = tombstone.store.RESOURCE_ENERGY;
+      var amount = tombstone.store[RESOURCE_ENERGY];
       return amount > 0 && globals.getTargetCount(tombstone) < 1;
     }
   });
