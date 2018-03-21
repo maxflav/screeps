@@ -146,7 +146,8 @@ function isTargetValid(creep, target) {
   }
 
   if (target instanceof StructureSpawn ||
-      target instanceof StructureExtension) {
+      target instanceof StructureExtension ||
+      target instanceof StructureTower) {
     return fullness > 0 && target.energy < target.energyCapacity;
   }
 
